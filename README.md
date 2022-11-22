@@ -3,5 +3,5 @@
 ## Usage
 
 ```
-cargo run -- searchstring example-filename.txt
+cargo run -- heck example.txt
 ```
