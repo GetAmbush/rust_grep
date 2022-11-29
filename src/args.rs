@@ -1,32 +1,31 @@
+use crate::errors::{Error, MissingArguments};
+
 #[derive(Debug)]
 pub struct Arguments {
     executable_name: String,
-    pub file: String,
+    pub file_path: String,
     regex: String,
 }
 
-impl<I: Iterator<Item = String>> From<I> for Arguments {
-    fn from(mut args: I) -> Self {
-        let executable_name = match args.next() {
-            Some(text) => text,
-            None => panic!("sdiofsdf"),
-        };
+impl Arguments {
+    pub fn try_from(mut args: impl Iterator<Item = String>) -> Result<Self, Error> {
+        let executable_name = args
+            .next()
+            .ok_or_else(|| Error::MissingArguments(MissingArguments::ExecutableName))?;
 
-        let regex = match args.next() {
-            Some(text) => text,
-            None => panic!("sdiofsdf"),
-        };
+        let regex = args
+            .next()
+            .ok_or_else(|| Error::MissingArguments(MissingArguments::FilePath))?;
 
-        let file = match args.next() {
-            Some(text) => text,
-            None => panic!("sdiofsdf"),
-        };
+        let file_path = args
+            .next()
+            .ok_or_else(|| Error::MissingArguments(MissingArguments::Regex))?;
 
-        Self {
-            regex,
-            file,
+        Ok(Self {
             executable_name,
-        }
+            regex,
+            file_path,
+        })
     }
 }
 
@@ -45,10 +44,11 @@ mod tests {
             regex_string.clone(),
             file_string.clone(),
         ];
-        let arguments = Arguments::from(std_args.into_iter());
+        let arguments = Arguments::try_from(std_args.into_iter())
+            .expect("could not convert arguments vector to parsed structure");
 
         assert_eq!(arguments.executable_name, executable_name_string);
-        assert_eq!(arguments.file, file_string);
+        assert_eq!(arguments.file_path, file_string);
         assert_eq!(arguments.regex, regex_string);
     }
 }
