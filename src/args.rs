@@ -5,8 +5,8 @@ pub struct Arguments {
     regex: String,
 }
 
-impl Arguments {
-    pub fn from_std(mut args: impl Iterator<Item = String>) -> Self {
+impl<I: Iterator<Item = String>> From<I> for Arguments {
+    fn from(mut args: I) -> Self {
         let executable_name = match args.next() {
             Some(text) => text,
             None => panic!("sdiofsdf"),
@@ -45,7 +45,7 @@ mod tests {
             regex_string.clone(),
             file_string.clone(),
         ];
-        let arguments = Arguments::from_std(std_args.into_iter());
+        let arguments = Arguments::from(std_args.into_iter());
 
         assert_eq!(arguments.executable_name, executable_name_string);
         assert_eq!(arguments.file, file_string);

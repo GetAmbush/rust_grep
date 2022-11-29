@@ -5,7 +5,7 @@ use args::Arguments;
 
 fn main() {
     let std_args = std::env::args();
-    let args = Arguments::from_std(std_args);
+    let args = Arguments::from(std_args);
     dbg!("{:?}", args);
 
     // println!("Hello, world!");
