@@ -51,8 +51,7 @@ mod tests {
     #[test]
     fn errors_when_does_not_have_correct_number_of_arguments() {
         let std_args = vec![];
-        let arguments = Arguments::try_from(std_args);
-        assert!(arguments.is_err());
-        assert!(matches!(arguments, Err(Error::InvalidNumberOfArguments)))
+        let result = Arguments::try_from(std_args);
+        assert!(matches!(result, Err(Error::InvalidNumberOfArguments)))
     }
 }

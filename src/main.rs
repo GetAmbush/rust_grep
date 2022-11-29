@@ -4,16 +4,13 @@ mod file_reader;
 
 use args::Arguments;
 use errors::Error;
-use std::fs::File;
 
 fn main() -> Result<(), Error> {
     let std_args: Vec<String> = std::env::args().collect();
     let args = Arguments::try_from(std_args)?;
     dbg!("{:?}", &args);
 
-    let file_handle = File::open(&args.file_path).unwrap();
-    let file_contents = file_reader::read_file(file_handle);
-
+    let file_contents = file_reader::read_file(&args.file_path)?;
     dbg!("{:?}", file_contents);
 
     Ok(())
