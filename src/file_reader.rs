@@ -17,9 +17,9 @@ mod tests {
 
     #[test]
     fn read_file_to_lines() {
-        let file_handle = std::fs::File::open("example.txt").expect("failed to read file");
+        let file_handle = std::fs::File::open("poem.txt").expect("failed to read file");
         let lines_read = read_file(file_handle);
 
-        assert_eq!(lines_read.len(), 4);
+        assert_eq!(lines_read.len(), 9);
     }
 }

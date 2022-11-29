@@ -3,5 +3,5 @@
 ## Usage
 
 ```
-cargo run -- heck example.txt
+cargo run -- th poem.txt
 ```
