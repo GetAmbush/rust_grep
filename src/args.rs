@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct Arguments {
     executable_name: String,
-    file: String,
+    pub file: String,
     regex: String,
 }
 
