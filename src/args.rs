@@ -1,25 +1,21 @@
-use crate::errors::{Error, MissingArguments};
+use crate::errors::Error;
 
 #[derive(Debug)]
 pub struct Arguments {
-    executable_name: String,
+    pub executable_name: String,
     pub file_path: String,
-    regex: String,
+    pub regex: String,
 }
 
 impl Arguments {
-    pub fn try_from(mut args: impl Iterator<Item = String>) -> Result<Self, Error> {
-        let executable_name = args
-            .next()
-            .ok_or_else(|| Error::MissingArguments(MissingArguments::ExecutableName))?;
+    pub fn try_from(args: Vec<String>) -> Result<Self, Error> {
+        if args.len() != 3 {
+            return Err(Error::InvalidNumberOfArguments);
+        }
 
-        let regex = args
-            .next()
-            .ok_or_else(|| Error::MissingArguments(MissingArguments::FilePath))?;
-
-        let file_path = args
-            .next()
-            .ok_or_else(|| Error::MissingArguments(MissingArguments::Regex))?;
+        let executable_name = args[0].clone();
+        let regex = args[1].clone();
+        let file_path = args[2].clone();
 
         Ok(Self {
             executable_name,
@@ -44,11 +40,19 @@ mod tests {
             regex_string.clone(),
             file_string.clone(),
         ];
-        let arguments = Arguments::try_from(std_args.into_iter())
+        let arguments = Arguments::try_from(std_args)
             .expect("could not convert arguments vector to parsed structure");
 
         assert_eq!(arguments.executable_name, executable_name_string);
         assert_eq!(arguments.file_path, file_string);
         assert_eq!(arguments.regex, regex_string);
+    }
+
+    #[test]
+    fn errors_when_does_not_have_correct_number_of_arguments() {
+        let std_args = vec![];
+        let arguments = Arguments::try_from(std_args);
+        assert!(arguments.is_err());
+        assert!(matches!(arguments, Err(Error::InvalidNumberOfArguments)))
     }
 }

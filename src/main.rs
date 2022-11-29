@@ -7,7 +7,7 @@ use errors::Error;
 use std::fs::File;
 
 fn main() -> Result<(), Error> {
-    let std_args = std::env::args();
+    let std_args: Vec<String> = std::env::args().collect();
     let args = Arguments::try_from(std_args)?;
     dbg!("{:?}", &args);
 
