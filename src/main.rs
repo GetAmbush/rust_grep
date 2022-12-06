@@ -1,6 +1,7 @@
 mod args;
 mod errors;
 mod file_reader;
+mod grep;
 
 use args::Arguments;
 use errors::Error;
