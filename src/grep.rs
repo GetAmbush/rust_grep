@@ -6,27 +6,56 @@ pub struct MatchResult {
     end: usize,
 }
 
-pub fn run(expression: &String, source: impl Iterator<Item = u8>) -> Vec<MatchResult> {
-    let mut match_count: usize = 0;
-    let expression_len = expression.as_bytes().len();
+pub fn run(expression: &String, mut source: impl Iterator<Item = u8>) -> Vec<MatchResult> {
+    let mut matches = Vec::new();
 
-    let window: VecDeque<u8> = VecDeque::new();
+    if let Some(mut window) = build_first_window(expression, &mut source) {
+        let mut begin = 0;
 
-    // optimize to use extend or similar
-    for i in 0..expression_len {
-        window.push_back(source.next().unwrap());
+        loop {
+            if expression_matches_window(&expression, &window) {
+                matches.push(MatchResult {
+                    begin,
+                    end: begin + expression.len() - 1,
+                })
+            }
+            match source.next() {
+                Some(value) => {
+                    window.pop_front();
+                    window.push_back(value);
+                    begin += 1;
+                }
+                None => break,
+            }
+        }
     }
 
-    //next window
-    window.pop_front();
-    window.push_back(source.next().unwrap());
-
-    //for each window
-    //if window == expression, match
-
-    match_results
+    matches
 }
 
+fn expression_matches_window(expression: &String, window: &VecDeque<u8>) -> bool {
+    window
+        .iter()
+        .zip(expression.as_bytes().iter())
+        .all(|(a, b)| *a == *b)
+}
+
+fn build_first_window(
+    expression: &String,
+    source: &mut impl Iterator<Item = u8>,
+) -> Option<VecDeque<u8>> {
+    let expression_len = expression.as_bytes().len();
+    let mut window = VecDeque::new();
+
+    for _ in 0..expression_len {
+        match source.next() {
+            Some(byte) => window.push_back(byte),
+            None => return None,
+        };
+    }
+
+    return Some(window);
+}
 #[cfg(test)]
 mod tests {
     use super::*;
